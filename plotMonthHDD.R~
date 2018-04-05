@@ -1,0 +1,34 @@
+ 
+plotMonthHDD <- function(year_s, month_n , heat_or_cool ){
+  
+  library(eurostat)
+  library(dplyr)
+  library(ggplot2)
+  
+  Month_names<-c("January","February","March","April",
+                 "May","June","July","August","September",
+                 "October","November","December")
+  
+  m_firsts <- c("-01-01","-02-01","-03-01","-04-01","-05-01","-06-01","-07-01","-08-01","-09-01","-10-01","-11-01","-12-01")
+  Month_firsts <- paste(year_s, m_firsts, sep="")
+  eid="nrg_chddr2_m"
+  
+  xdat2 <- get_eurostat(eid) %>%
+    filter(time == Month_firsts[month_n]) %>%
+    filter(indic_nrg == heat_or_cool  ) %>%
+    mutate(cat = cut_to_classes(values, n=9, style="pretty", decimals=0))
+  
+  mapdata <- merge_eurostat_geodata(xdat2, resolution = "10")
+  
+  print( ggplot(mapdata, aes(x = long, y = lat, group = group))+
+    geom_polygon(aes(fill=cat), color="grey", size = .1)+
+    scale_fill_brewer(palette = "YlOrRd") +  # Spectral RdYlBu
+    labs(title="Heating Degree Days from eurostat",
+         subtitle=Month_names[month_n],
+         fill="key") + theme_light()+
+    coord_map(xlim=c(-16,38), ylim=c(32,72)))
+  
+  return( ) # redundant apparently
+  
+}
+
