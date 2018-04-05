@@ -1,3 +1,4 @@
+#HDDmap
 .Rproj.user
 .Rhistory
 .RData
@@ -5,3 +6,12 @@
 .R~
 .un~
 /notes
+#Ignore proliferating vim byproducts
+*.R~
+*.un~
+.gitignore~
+..gitignore.un~
+
+#Ignore R byproducts
+*.Rdata
+
