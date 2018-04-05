@@ -1,4 +1,16 @@
+#HDDmap
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+.R~
+.un~
+/notes
+#Ignore vim byproducts
+*.R~
+*.un~
+.gitignore~
+
+#Ignore R byproducts
+*.Rdata
+

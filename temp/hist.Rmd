@@ -1,0 +1,81 @@
+---
+title: "Histograms"
+author: "Nick Oakins"
+date: "5 April 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup2}
+source("c:/r/app0010/HDDmap/global.R")
+
+```
+This function gets the years available in the table under investigation:
+
+```{r data0}
+print(get_years_u())
+
+```
+```{r page12, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+Plot the histogram for the data for all years in the table for a given month for a selected region:
+
+```{r plot1}
+detailPlot("2012",3,"UKM")
+
+```
+
+
+```{r pageb, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+
+```{r plot2}
+detailPlot("2012", 9, "ITG1")
+
+```
+
+```{r page35, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+
+
+```{r plot3.5}
+detailPlot("2012", 6, "PT15")
+```
+```{r page3, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+
+```{r plot3}
+detailPlot("2012", 8, "AT")
+```
+```{r page4, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+
+```{r plot4}
+detailPlot("2012", 11, "UKC2")
+
+```
+```{r page5, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+
+```{r plot5}
+detailPlot("2012", 2, "UKD3")
+
+```
+```{r page6, echo=FALSE, results='asis'}
+cat( "\\newpage"  )
+```
+
+
+```{r plot6}
+detailPlot("2012", 4, "ES53")
+
+```

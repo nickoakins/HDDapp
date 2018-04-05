@@ -1,8 +1,19 @@
+##
+# functions for HDDmap
+# Nick Oakins April 2018
+##
+
 library(eurostat)
 library(tidyverse)
+library(dplyr)
+library(ggplot2)
 
 # scope: used in several of these functions
 eid="nrg_chddr2_m"
+
+Month_names<-c("January","February","March","April",
+               "May","June","July","August","September",
+               "October","November","December")
 
 geo_dropdown <- function(){
   data_all <- get_eurostat(eid)  
@@ -12,14 +23,17 @@ geo_dropdown <- function(){
   return(dd)
 }
 
+# not (yet) used
 heat_or_cool_dropdown <- function(){
-  # TODO should be a dictionary lookup 
+  # TODO: should be a dictionary lookup 
   # but getting cooling DD doesn't work yet!
   hc <- as.list(c("CDD","HDD"))
   names(hc)<-c("Cooling degree days","Heating degree days")
   return(hc)
 }
 
+# input:
+# set of geo codes 
 geo_sublist <- function(just_these){
    z<- get_eurostat_dic("geo")
    z2 <- z[z$code_name %in% just_these, ]
@@ -41,8 +55,8 @@ get_years_for_dd <- function(){
 
 
 
-detailPlot <-  function(y,m,x){
-  # TODO not using the input year (yet)
+detailPlot <-  function(y,m,geo_code){
+  # TODO: not using the input year (yet)
   # reusable code!
   ys = get_years_u()
   
@@ -51,33 +65,33 @@ detailPlot <-  function(y,m,x){
   
   xdat2 <- get_eurostat(eid) %>%
     filter(time %in% as.Date(date_filter)) %>%
-    filter(geo == x)
+    filter(indic_nrg == "HDD") %>%
+    filter(geo == geo_code)
   
   yy<-xdat2$values 
-# TODO dynamic ylim to cope with data  
-# hist(yy, prob=TRUE, ylim=c(0,.03), breaks=20) 
-  hist(yy, prob=TRUE,                breaks=20) 
-  curve(dnorm(x, mean(yy), sd(yy)), add=TRUE, col="darkblue", lwd=2)
+  
+  w_here <- as.character(get_eurostat_dic("geo") %>% 
+            filter( code_name == geo_code) %>% 
+            select( full_name ))
+  
+  mu<-mean(yy)
+  sigma<-sd(yy)
+  hist(yy, prob=TRUE,                breaks=20 ,
+       main = paste("Histogram for",w_here,"for",Month_names[m]),
+       xlab = paste("HDD, mean is",round(mu,3),"std dev is",round(sigma,3) ) ) 
+  curve(dnorm(x, mu, sigma), add=TRUE, col="darkblue", lwd=2)
   
 }
 
-
-# d
-
+# input:
+# year as a string
+# month as an integer
+# heat_or_cool in ("HDD","CDD") # TODO: not implemented
  
 plotMonthHDD <- function(year_s, month_n , heat_or_cool ){
   
-  library(eurostat)
-  library(dplyr)
-  library(ggplot2)
-  
-  Month_names<-c("January","February","March","April",
-                 "May","June","July","August","September",
-                 "October","November","December")
-  
   m_firsts <- c("-01-01","-02-01","-03-01","-04-01","-05-01","-06-01","-07-01","-08-01","-09-01","-10-01","-11-01","-12-01")
   Month_firsts <- paste(year_s, m_firsts, sep="")
-  eid="nrg_chddr2_m"
   
   xdat2 <- get_eurostat(eid) %>%
     filter(time == Month_firsts[month_n]) %>%
@@ -89,13 +103,11 @@ plotMonthHDD <- function(year_s, month_n , heat_or_cool ){
   print( ggplot(mapdata, aes(x = long, y = lat, group = group))+
     geom_polygon(aes(fill=cat), color="grey", size = .1)+
     scale_fill_brewer(palette = "YlOrRd") +  # Spectral RdYlBu
-    labs(title="Heating Degree Days from eurostat",
+    labs(title="Heating Degree Days from Eurostat",
          subtitle=Month_names[month_n],
          fill="key") + theme_light()+
     coord_map(xlim=c(-16,38), ylim=c(32,72)))
   
-  return( ) # redundant apparently
+  return( ) # redundant ?
   
 }
-
-
